@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>390 Grade Calculator (Mid-Semester)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root { --bg:#0b1020; --card:#141b34; --muted:#9fb0ff; --text:#eaf0ff; --accent:#6ea8fe; --border:#222a4a; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif; }
+  .wrap { max-width:980px; margin:32px auto; padding:0 16px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.25); }
+  h1 { font-size:1.5rem; margin:0 0 6px; }
+  h2 { font-size:1.1rem; margin:20px 0 10px; color:#cfe1ff; }
+  .muted { color:var(--muted); font-size:0.95rem; margin:0 0 18px; }
+  .grid { display:grid; gap:12px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .grid-3 { display:grid; gap:12px; grid-template-columns: repeat(3, minmax(0,1fr)); }
+  @media (max-width: 720px) {
+    .grid, .grid-3 { grid-template-columns: 1fr; }
+    .wrap { margin:20px auto; }
+  }
+  label { font-size:0.95rem; color:#cfe1ff; display:block; margin-bottom:6px; }
+  input[type="number"] { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #2a3562; background:#0e1430; color:var(--text); font-size:1rem; outline:none; }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .btn { cursor:pointer; border:1px solid #2a3562; padding:10px 14px; border-radius:12px; background:#10183a; color:#eaf0ff; font-weight:600; }
+  .btn:hover { border-color:#3a4aa2; box-shadow:0 0 0 3px rgba(110,168,254,0.15); }
+  .pill { display:inline-block; padding:8px 12px; border-radius:999px; background:#0e1430; border:1px solid #2a3562; font-size:0.9rem; color:#cfe1ff; }
+  .result { background:#0e1430; border:1px solid #2a3562; border-radius:14px; padding:16px; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #22315c; }
+  .right { text-align:right; }
+  .score { font-size:1.3rem; font-weight:700; letter-spacing:0.3px; }
+  .footnote { color:#a9b7ff; font-size:0.85rem; }
+  .section { padding:12px; border:1px dashed #27315c; border-radius:12px; background:#0e1430; }
+  tfoot td { font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>390 – Current Grade Calculator (last update: 10-22-25)</h1>
+    <p class="muted">
+      Enter your scores so far. If you leave a box blank, it won’t be counted yet. Homework and Computer HW drop the lowest percent among entered assignments, quizzes drop the lowest entered quiz and average the rest, ICE drops the lowest 3 among entered scores, and if your final exam percentage is higher than your midterm percentage, the final replaces the midterm for the midterm slot.
+    </p>
+
+    <div class="section">
+      <h2>Homework</h2>
+      <div class="grid-3">
+        <div><label for="hw1">HW 1 (out of 24)</label><input id="hw1" type="number" min="0" step="0.01" /></div>
+        <div><label for="hw2">HW 2 (out of 21)</label><input id="hw2" type="number" min="0" step="0.01" /></div>
+        <div><label for="hw3">HW 3 (out of 20)</label><input id="hw3" type="number" min="0" step="0.01" /></div>
+        <div><label for="hw4">HW 4 (out of 20)</label><input id="hw4" type="number" min="0" step="0.01" /></div>
+        <div><label for="hw5">HW 5 (out of 20)</label><input id="hw5" type="number" min="0" step="0.01" /></div>
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="section">
+      <h2>Computer HW</h2>
+      <div class="grid-3">
+        <div><label for="chw1">CHW 1 (out of 15)</label><input id="chw1" type="number" min="0" step="0.01" /></div>
+        <div><label for="chw2">CHW 2 (out of 21)</label><input id="chw2" type="number" min="0" step="0.01" /></div>
+        <div><label for="chw3">CHW 3 (out of 21)</label><input id="chw3" type="number" min="0" step="0.01" /></div>
+        <div><label for="chw4">CHW 4 (out of 21)</label><input id="chw4" type="number" min="0" step="0.01" /></div>
+        <div><label for="chw5">CHW 5 (out of 21)</label><input id="chw5" type="number" min="0" step="0.01" /></div>
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="section">
+      <h2>Quizzes (lowest quiz dropped)</h2>
+      <div class="grid-3">
+        <div><label for="q1">Quiz 1 (out of 10)</label><input id="q1" type="number" min="0" step="0.01" /></div>
+        <div><label for="q2">Quiz 2 (out of 10)</label><input id="q2" type="number" min="0" step="0.01" /></div>
+        <div><label for="q3">Quiz 3 (out of 10)</label><input id="q3" type="number" min="0" step="0.01" /></div>
+        <div><label for="q4">Quiz 4 (out of 10)</label><input id="q4" type="number" min="0" step="0.01" /></div>
+        <div><label for="q5">Quiz 5 (out of 10)</label><input id="q5" type="number" min="0" step="0.01" /></div>
+      </div>
+      <p class="footnote">Among the quizzes entered so far, the lowest quiz is dropped and the remaining quizzes are averaged.</p>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="section">
+      <h2>ICE Submitted</h2>
+      <div class="grid-3">
+        <div><label for="ice1">ICE 1 (out of 1)</label><input id="ice1" type="number" min="0" step="0.01" /></div>
+        <div><label for="ice2">ICE 2 (out of 1)</label><input id="ice2" type="number" min="0" step="0.01" /></div>
+        <div><label for="ice3">ICE 3 (out of 1)</label><input id="ice3" type="number" min="0" step="0.01" /></div>
+        <div><label for="ice4">ICE 4 (out of 1)</label><input id="ice4" type="number" min="0" step="0.01" /></div>
+        <div><label for="ice5">ICE 5 (out of 1)</label><input id="ice5" type="number" min="0" step="0.01" /></div>
+        <div><label for="ice6">ICE 6 (out of 1)</label><input id="ice6" type="number" min="0" step="0.01" /></div>
+        <div><label for="ice7">ICE 7 (out of 1)</label><input id="ice7" type="number" min="0" step="0.01" /></div>
+        <div><label for="ice8">ICE 8 (out of 1)</label><input id="ice8" type="number" min="0" step="0.01" /></div>
+      </div>
+      <p class="footnote">ICE logic: consider only entered scores, drop the lowest 3. If 3 or fewer ICEs are entered, the ICE category is temporarily excluded.</p>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="section">
+      <h2>Midterm, Final, Project</h2>
+      <div class="grid">
+        <div><label for="mid">Midterm (out of 30)</label><input id="mid" type="number" min="0" step="0.01" /></div>
+        <div><label for="final">Final Exam (out of 30)</label><input id="final" type="number" min="0" step="0.01" /></div>
+        <div><label for="proj">Final Project (out of 100)</label><input id="proj" type="number" min="0" step="0.01" /></div>
+      </div>
+    </div>
+
+    <div style="height:16px"></div>
+
+    <button class="btn" id="calcBtn">Compute Grade</button>
+    <span class="pill" id="weightsStatus" style="margin-left:10px;">Completed Weight: 65%</span>
+
+    <div style="height:16px"></div>
+
+    <div class="result">
+      <div class="score" id="overall">Your Current Grade: —</div>
+      <table>
+        <thead>
+          <tr><th>Category</th><th class="right">Category %</th><th class="right">Weight in Course</th><th class="right">Contribution to Current Grade</th></tr>
+        </thead>
+        <tbody id="breakdown">
+          <tr><td>Homework</td><td class="right">—</td><td class="right">15%</td><td class="right">—</td></tr>
+          <tr><td>Computer HW</td><td class="right">—</td><td class="right">15%</td><td class="right">—</td></tr>
+          <tr><td>Quizzes</td><td class="right">—</td><td class="right">20%</td><td class="right">—</td></tr>
+          <tr><td>ICE Submitted</td><td class="right">—</td><td class="right">5%</td><td class="right">—</td></tr>
+          <tr><td>Midterm</td><td class="right">—</td><td class="right">15%</td><td class="right">—</td></tr>
+          <tr><td>Final Exam</td><td class="right">—</td><td class="right">15%</td><td class="right">—</td></tr>
+          <tr><td>Final Project</td><td class="right">—</td><td class="right">15%</td><td class="right">—</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td><strong>Total</strong></td><td></td><td></td><td class="right" id="totalContrib"><strong>—</strong></td></tr>
+        </tfoot>
+      </table>
+      <p class="footnote">“Contribution to Current Grade” scales each included category by its course weight divided by the total completed weight. If a category is blank or not yet contributing, it is excluded until data exists.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function valOrNull(id){
+  const v = document.getElementById(id).value;
+  if (v === "") return null;
+  const n = Number(v);
+  return isNaN(n) ? null : n;
+}
+
+function pct(x, digits=2){
+  if (x === null || typeof x === "undefined" || isNaN(x)) return "—";
+  const r = Math.round(x * Math.pow(10, digits)) / Math.pow(10, digits);
+  return r.toFixed(digits) + "%";
+}
+
+// HW/CHW: drop lowest percent among PRESENT entries; tie-break: drop bigger max if ratios equal
+function dropLowestPercentFlexible(scores, maxes){
+  const present = [];
+  for (let i=0; i<scores.length; i++){
+    const s = scores[i], m = maxes[i];
+    if (s === null || m <= 0) continue;
+    present.push({ idx:i, s, m, r:s/m });
+  }
+
+  if (present.length === 0) return { pct: null };
+  if (present.length === 1){
+    const p = present[0];
+    return { pct: (p.s / p.m) * 100 };
+  }
+
+  let dropIdx = 0;
+  for (let i=1; i<present.length; i++){
+    if (present[i].r < present[dropIdx].r) dropIdx = i;
+    else if (present[i].r === present[dropIdx].r && present[i].m > present[dropIdx].m) dropIdx = i;
+  }
+
+  let num = 0, den = 0;
+  for (let i=0; i<present.length; i++){
+    if (i === dropIdx) continue;
+    num += present[i].s;
+    den += present[i].m;
+  }
+
+  return { pct: den === 0 ? null : (num / den) * 100 };
+}
+
+// Quizzes: use entered quizzes, drop lowest if at least 2, average the rest
+function quizzesPercent(q1, q2, q3, q4, q5) {
+  let quizzes = [q1, q2, q3, q4, q5].filter(x => x !== null);
+
+  if (quizzes.length === 0) return { pct: null };
+
+  if (quizzes.length >= 2) {
+    quizzes.sort((a, b) => a - b);
+    quizzes.shift();
+  }
+
+  const avg = quizzes.reduce((a, b) => a + b, 0) / quizzes.length;
+  return { pct: (avg / 10) * 100 };
+}
+
+// ICE: consider only entered scores; drop lowest 3; if <=3 entered, exclude category
+function icePercentDrop3Flexible(ices){
+  const vals = ices.filter(x => x !== null);
+  if (vals.length <= 3) return { pct: null };
+
+  vals.sort((a, b) => b - a);
+  const kept = vals.slice(0, vals.length - 3);
+  const avg = kept.reduce((a, b) => a + b, 0) / kept.length;
+  return { pct: avg * 100 };
+}
+
+function compute() {
+  const hw  = [valOrNull("hw1"), valOrNull("hw2"), valOrNull("hw3"), valOrNull("hw4"), valOrNull("hw5")];
+  const chw = [valOrNull("chw1"), valOrNull("chw2"), valOrNull("chw3"), valOrNull("chw4"), valOrNull("chw5")];
+  const q1 = valOrNull("q1"), q2 = valOrNull("q2"), q3 = valOrNull("q3"), q4 = valOrNull("q4"), q5 = valOrNull("q5");
+  const ice = [valOrNull("ice1"), valOrNull("ice2"), valOrNull("ice3"), valOrNull("ice4"), valOrNull("ice5"), valOrNull("ice6"), valOrNull("ice7"), valOrNull("ice8")];
+  const mid = valOrNull("mid");
+  const fin = valOrNull("final");
+  const prj = valOrNull("proj");
+
+  const hwPct   = dropLowestPercentFlexible(hw, [24,21,20,20,20]).pct;
+  const chwPct  = dropLowestPercentFlexible(chw, [15,21,21,21,21]).pct;
+  const quizPct = quizzesPercent(q1, q2, q3, q4, q5).pct;
+  const icePct  = icePercentDrop3Flexible(ice).pct;
+  const midPct  = (mid === null ? null : (mid / 30) * 100);
+  const finPct  = (fin === null ? null : (fin / 30) * 100);
+  const prjPct  = (prj === null ? null : prj);
+
+  // Midterm replacement policy: if final % is higher than midterm %, use final for midterm slot
+  const effMidPct =
+    (midPct === null && finPct === null) ? null
+    : (midPct === null ? finPct
+       : (finPct === null ? midPct
+          : Math.max(midPct, finPct)));
+
+  const w = { HW:15, CHW:15, QUIZ:20, ICE:5, MID:15, FIN:15, PRJ:15 };
+
+  const include = {
+    HW: hwPct !== null,
+    CHW: chwPct !== null,
+    QUIZ: quizPct !== null,
+    ICE: icePct !== null,
+    MID: effMidPct !== null,
+    FIN: finPct !== null,
+    PRJ: prjPct !== null
+  };
+
+  let completed = 0;
+  for (const k in include) {
+    if (include[k]) completed += w[k];
+  }
+
+  function contrib(pctVal, weight){
+    if (pctVal === null || completed === 0) return null;
+    return pctVal * (weight / completed);
+  }
+
+  const cHW  = contrib(hwPct, w.HW);
+  const cCHW = contrib(chwPct, w.CHW);
+  const cQ   = contrib(quizPct, w.QUIZ);
+  const cICE = contrib(icePct, w.ICE);
+  const cMID = contrib(effMidPct, w.MID);
+  const cFIN = contrib(finPct, w.FIN);
+  const cPRJ = contrib(prjPct, w.PRJ);
+
+  const parts = [cHW, cCHW, cQ, cICE, cMID, cFIN, cPRJ];
+  const totalContrib = parts.reduce((a, b) => a + (b === null ? 0 : b), 0);
+  const currentGrade = totalContrib;
+
+  document.getElementById("weightsStatus").textContent =
+    "Completed Weight: " + completed.toFixed(1).replace(/\.0$/, "") + "%";
+
+  const tbody = document.getElementById("breakdown");
+  tbody.innerHTML = "";
+
+  function row(name, pctVal, weight, contribVal){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${name}</td>
+                    <td class="right">${pct(pctVal,1)}</td>
+                    <td class="right">${(pctVal === null) ? "—" : (weight + "%")}</td>
+                    <td class="right">${pct(contribVal,2)}</td>`;
+    tbody.appendChild(tr);
+  }
+
+  row("Homework (after drop)", hwPct, w.HW, cHW);
+  row("Computer HW (after drop)", chwPct, w.CHW, cCHW);
+  row("Quizzes (lowest entered quiz dropped)", quizPct, w.QUIZ, cQ);
+  row("ICE Submitted (drop lowest 3 among entered)", icePct, w.ICE, cICE);
+  row("Midterm (replaced by Final if higher)", effMidPct, w.MID, cMID);
+  row("Final Exam", finPct, w.FIN, cFIN);
+  row("Final Project", prjPct, w.PRJ, cPRJ);
+
+  document.getElementById("totalContrib").innerHTML = `<strong>${pct(currentGrade,2)}</strong>`;
+  document.getElementById("overall").textContent =
+    isNaN(currentGrade) ? "Your Current Grade: —" : "Your Current Grade: " + currentGrade.toFixed(2) + "%";
+}
+
+document.getElementById("calcBtn").addEventListener("click", compute);
+</script>
+</body>
+</html>
